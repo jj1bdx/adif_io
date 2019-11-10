@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf_8") as fh:
 
 setuptools.setup(
     name="adif_io",
-    version="0.0.1",
+    version="0.0.2",
     author="Andreas Krüger (DJ3EI)",
     author_email="dj3ei@famsik.de",
     description="Basic input of ADIF radio amateur log files.",

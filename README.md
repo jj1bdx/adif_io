@@ -30,14 +30,15 @@ qsos, header =  adif_io.read_from_string(
     "<BAND:3>40M<RST_SENT:3>599<RST_RCVD:3>599"
     "<SRX_STRING:3>SSA<DXCC:3>284<EOR>")
 
-print("QSOs: {}, ADIF Header: {}".format(qsos, header))
+print("QSOs: {}\nADIF Header: {}".format(qsos, header))
 ```
 
 This will print out
 
 
-> QSOs: [{'QSO_DATE': '20190714', 'SRX_STRING': 'LRMD', 'STX_STRING': '28', 'BAND': '40M', 'CALL': 'LY0HQ', 'MODE': 'CW', 'RST_RCVD': '599', 'TIME_ON': '1140', 'RST_SENT': '599'}, {'QSO_DATE': '20190714', 'SRX_STRING': 'SSA', 'RST_SENT': '599', 'DXCC': '284', 'TIME_ON': '1130', 'CALL': 'SE9HQ', 'FREQ': '7', 'RST_RCVD': '599', 'MODE': 'CW', 'BAND': '40M'}]
+> QSOs: [{'RST_SENT': '599', 'CALL': 'LY0HQ', 'MODE': 'CW', 'RST_RCVD': '599', 'QSO_DATE': '20190714', 'TIME_ON': '1140', 'BAND': '40M', 'STX_STRING': '28', 'SRX_STRING': 'LRMD'}, {'DXCC': '284', 'RST_SENT': '599', 'CALL': 'SE9HQ', 'MODE': 'CW', 'RST_RCVD': '599', 'BAND': '40M', 'FREQ': '7', 'QSO_DATE': '20190714', 'TIME_ON': '1130', 'SRX_STRING': 'SSA'}]     
 > ADIF Header: {'ADIF_VER': '3.1.0'}
+
 
 ## Time on and time off
 
@@ -76,10 +77,9 @@ There may be an ADIF output facility some time later.
 
 ## Sample code
 
-Here is sample code (for Pandas/Jupyter users):
+Here is some sample code:
 
 ```
-import pandas as pd
 import adif_io
 
 qsos_raw, adif_header = adif_io.read_from_file("log.adi")
@@ -88,7 +88,12 @@ qsos_raw, adif_header = adif_io.read_from_file("log.adi")
 for qso in qsos_raw:
     qso["t"] = adif_io.time_on(qso)
 qsos_raw_sorted = sorted(qsos_raw, key = lambda qso: qso["t"])
+```
 
+Pandas / Jupyter users may want to add `import pandas as pd`
+up above and continue like this:
+
+```
 qsos = pd.DataFrame(qsos_raw_sorted)
 qsos.info()
 ```
