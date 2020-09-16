@@ -38,12 +38,19 @@ class AdifHeaderWithoutEOH(AdifException):
     """Exception for header found, not terminated with <EOH>"""
     pass
 
-def read_from_string(adif_string):
+def read_from_string(adif_string_raw):
+
+    # adif_string now contains BYTES instead of strings
+    # To handle ADIF field length correctly
+    # as the length in BYTES, NOT in that of UTF-8 characters
+    adif_string = adif_string_raw.encode()
+
     # The ADIF file header keys and values, if any.
     adif_headers = {}
-    
-    header_field_re = re.compile(r'<((eoh)|(\w+)\:(\d+)(\:[^>]+)?)>', re.IGNORECASE)
-    field_re = re.compile(r'<((eor)|(\w+)\:(\d+)(\:[^>]+)?)>', re.IGNORECASE)
+
+    # Use regular expressions for BYTES, NOT for strings
+    header_field_re = re.compile(b'<((eoh)|(\w+)\:(\d+)(\:[^>]+)?)>', re.IGNORECASE)
+    field_re = re.compile(b'<((eor)|(\w+)\:(\d+)(\:[^>]+)?)>', re.IGNORECASE)
     
     qsos = []
     cursor = 0
@@ -61,7 +68,8 @@ def read_from_string(adif_string):
                     value_start = header_field_mo.end(0)
                     value_end = value_start + int(header_field_mo.group(4))
                     value = adif_string[value_start:value_end]
-                    adif_headers[field] = value
+                    # Convert bytes into strings
+                    adif_headers[field.decode()] = value.decode()
                     cursor = value_end
             else:
                 raise AdifHeaderWithoutEOF()
@@ -81,7 +89,8 @@ def read_from_string(adif_string):
             value_start = field_mo.end(0)
             value_end = value_start + int(field_mo.group(4))
             value = adif_string[value_start:value_end]
-            qso[field] = value
+            # Convert bytes into strings
+            qso[field.decode()] = value.decode()
             cursor = value_end
         field_mo = field_re.search(adif_string, cursor)
 
